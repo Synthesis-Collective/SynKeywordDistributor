@@ -15,7 +15,7 @@ namespace KeywordDistributor
 {
     class Program
     {
-        public static Dictionary<string, Entry> data = new();
+        public static Dictionary<string, Entry>? data = null;
         public static Dictionary<string, FormLink<IKeywordGetter>> keywords = new();
         public static JsonMergeSettings merge = new() { MergeArrayHandling = MergeArrayHandling.Union, MergeNullValueHandling = MergeNullValueHandling.Merge };
         public static async Task<int> Main(string[] args)
@@ -34,7 +34,7 @@ namespace KeywordDistributor
             {
                 JObj.Merge(JObject.Parse(File.ReadAllText(Path.Combine(state.DataFolderPath, f))), merge);
             }
-            var data = JObj.ToObject<Dictionary<string, Entry>>();
+            data = JObj.ToObject<Dictionary<string, Entry>>();
             var keywds = data?.SelectMany(x => x.Value.Keywords.Select(x => x.Key)).ToHashSet().ToList();
             foreach (var kywd in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides())
             {
