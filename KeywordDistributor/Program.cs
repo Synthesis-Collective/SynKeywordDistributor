@@ -8,8 +8,6 @@ using KeywordDistributor.Types;
 using System.IO;
 using System.Linq;
 using Noggog;
-using System.ComponentModel;
-using Mutagen.Bethesda.Oblivion.Internals;
 
 namespace KeywordDistributor
 {
