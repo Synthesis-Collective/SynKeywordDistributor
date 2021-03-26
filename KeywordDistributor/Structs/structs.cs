@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Mutagen.Bethesda;
 
-namespace KeywordDistributor.Types {
+namespace KeywordDistributor.Structs {
     struct Entry{
         public ModKey Mod;
-        public Dictionary<string, Action> Keywords;
+        public Dictionary<string, ToDo> Keywords;
     }
-    enum Action {
+    enum ToDo {
         A, R
     }
 }

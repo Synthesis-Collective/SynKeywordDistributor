@@ -1,13 +1,12 @@
 ﻿using Mutagen.Bethesda;
-using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Synthesis;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using KeywordDistributor.Types;
+using KeywordDistributor.Structs;
 using System.IO;
 using System.Linq;
-using Noggog;
 
 namespace KeywordDistributor
 {
@@ -43,28 +42,60 @@ namespace KeywordDistributor
             }
             if (data != null)
             {
-                foreach (var item in state.LoadOrder.PriorityOrder.Weapon().WinningOverrides())
+                foreach (var item in state.LoadOrder.PriorityOrder.Activator().WinningOverrides())
                 {
                     if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
                     {
                         var viakey = data[item.EditorID ?? ""].Keywords;
                         var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
                         var DoWork = keys.Except(item.Keywords).Any();
-                        DoWork |= viakey.Where(x=>x.Value == Action.R).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
                         if (DoWork)
                         {
-                            var copy = state.PatchMod.Weapons.GetOrAddAsOverride(item);
+                            var copy = state.PatchMod.Activators.GetOrAddAsOverride(item);
                             foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
                             {
                                 switch (kyd.Value)
                                 {
-                                    case Action.R:
+                                    case ToDo.R:
                                         if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
                                         {
                                             copy.Keywords?.Remove(keywords[kyd.Key]);
                                         }
                                         break;
-                                    case Action.A:
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Ammunition().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Ammunitions.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
                                         if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
                                         {
                                             copy?.Keywords?.Add(keywords[kyd.Key]);
@@ -82,7 +113,7 @@ namespace KeywordDistributor
                         var viakey = data[item.EditorID ?? ""].Keywords;
                         var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
                         var DoWork = keys.Except(item.Keywords).Any();
-                        DoWork |= viakey.Where(x=>x.Value == Action.R).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
                         if (DoWork)
                         {
                             var copy = state.PatchMod.Armors.GetOrAddAsOverride(item);
@@ -90,13 +121,461 @@ namespace KeywordDistributor
                             {
                                 switch (kyd.Value)
                                 {
-                                    case Action.R:
+                                    case ToDo.R:
                                         if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
                                         {
                                             copy.Keywords?.Remove(keywords[kyd.Key]);
                                         }
                                         break;
-                                    case Action.A:
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Book().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Books.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Flora().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Florae.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Furniture().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Furniture.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Ingestible().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Ingestibles.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Ingredient().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Ingredients.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Key().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Keys.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Location().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Locations.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.MagicEffect().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.MagicEffects.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.MiscItem().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.MiscItems.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Npcs.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Race().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Races.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Scroll().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Scrolls.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Spell().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Spells.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
+                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
+                                        {
+                                            copy?.Keywords?.Add(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (var item in state.LoadOrder.PriorityOrder.Weapon().WinningOverrides())
+                {
+                    if (data.ContainsKey(item.EditorID ?? "") && item.Keywords != null && data[item.EditorID ?? ""].Mod.Equals(item.FormKey.ModKey))
+                    {
+                        var viakey = data[item.EditorID ?? ""].Keywords;
+                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
+                        var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
+                        if (DoWork)
+                        {
+                            var copy = state.PatchMod.Weapons.GetOrAddAsOverride(item);
+                            foreach (var kyd in data[copy.EditorID ?? ""].Keywords)
+                            {
+                                switch (kyd.Value)
+                                {
+                                    case ToDo.R:
+                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
+                                        {
+                                            copy.Keywords?.Remove(keywords[kyd.Key]);
+                                        }
+                                        break;
+                                    case ToDo.A:
                                         if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
                                         {
                                             copy?.Keywords?.Add(keywords[kyd.Key]);
