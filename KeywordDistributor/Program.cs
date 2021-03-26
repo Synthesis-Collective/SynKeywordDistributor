@@ -50,6 +50,7 @@ namespace KeywordDistributor
                         var viakey = data[item.EditorID ?? ""].Keywords;
                         var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
                         var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x=>x.Value == Action.R).Any();
                         if (DoWork)
                         {
                             var copy = state.PatchMod.Weapons.GetOrAddAsOverride(item);
@@ -81,6 +82,7 @@ namespace KeywordDistributor
                         var viakey = data[item.EditorID ?? ""].Keywords;
                         var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
                         var DoWork = keys.Except(item.Keywords).Any();
+                        DoWork |= viakey.Where(x=>x.Value == Action.R).Any();
                         if (DoWork)
                         {
                             var copy = state.PatchMod.Armors.GetOrAddAsOverride(item);
