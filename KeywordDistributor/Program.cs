@@ -35,7 +35,7 @@ namespace KeywordDistributor
                 JObj.Merge(JObject.Parse(File.ReadAllText(Path.Combine(state.DataFolderPath, f))), merge);
             }
             data = JObj.ToObject<Dictionary<string, Entry>>();
-            if (data != null)
+            if (data != null && data.Count != 0)
             {
                 var keywds = data.SelectMany(x => x.Value.AKeywords).Concat(data.SelectMany(x => x.Value.RKeywords)).ToHashSet().ToList();
                 foreach (var kywd in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides())
