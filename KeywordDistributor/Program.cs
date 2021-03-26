@@ -10,6 +10,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 
 using KeywordDistributor.Structs;
+using Noggog;
 
 namespace KeywordDistributor
 {
@@ -34,43 +35,49 @@ namespace KeywordDistributor
                 JObj.Merge(JObject.Parse(File.ReadAllText(Path.Combine(state.DataFolderPath, f))), merge);
             }
             data = JObj.ToObject<Dictionary<string, Entry>>();
-            var keywds = data?.SelectMany(x => x.Value.Keywords.Select(x => x.Key)).ToHashSet().ToList();
-            foreach (var kywd in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides())
-            {
-                if (keywds?.Contains(kywd.EditorID ?? "") ?? false)
-                {
-                    keywords[kywd.EditorID ?? ""] = new FormLink<IKeywordGetter>(kywd);
-                }
-            }
             if (data != null)
             {
+                var keywds = data.SelectMany(x => x.Value.AKeywords).Concat(data.SelectMany(x => x.Value.RKeywords)).ToHashSet().ToList();
+                foreach (var kywd in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides())
+                {
+                    if (keywds?.Contains(kywd.EditorID ?? "") ?? false)
+                    {
+                        keywords[kywd.EditorID ?? ""] = new FormLink<IKeywordGetter>(kywd);
+                    }
+                }
                 foreach (var obj in state.LoadOrder.PriorityOrder.SkyrimMajorRecord().WinningContextOverrides(state.LinkCache))
                 {
                     if (data.ContainsKey(obj.Record.EditorID ?? "") && obj.Record is IKeywordedGetter<IKeywordGetter> item && item.Keywords != null && data[obj.Record.EditorID ?? ""].Mod.Equals(obj.Record.FormKey.ModKey))
                     {
-                        var viakey = data[obj.Record.EditorID ?? ""].Keywords;
-                        var keys = keywords.Where(x => viakey.Keys.Contains(x.Key)).Select(x => x.Value);
-                        var DoWork = keys.Except(item.Keywords).Any();
-                        DoWork |= viakey.Where(x => x.Value == ToDo.R).Any();
-                        if (DoWork)
+                        var addWord = data[obj.Record.EditorID ?? ""].AKeywords;
+                        var remWord = data[obj.Record.EditorID ?? ""].RKeywords;
+                        var addKeys = keywords.Where(x => addWord.Contains(x.Key)).Select(x => x.Value);
+                        var remKeys = keywords.Where(x => remWord.Contains(x.Key)).Select(x => x.Value);
+                        var DoAdd = addKeys.Any(x => !item.Keywords.Contains(x));
+                        var DoRem = remKeys.Any(x => item.Keywords.Contains(x));
+                        if (DoAdd || DoRem)
                         {
                             var copy = obj.GetOrAddAsOverride(state.PatchMod) as IKeyworded<IKeywordGetter>;
-                            foreach (var kyd in data[obj.Record.EditorID ?? ""].Keywords)
+                            if (DoRem)
                             {
-                                switch (kyd.Value)
+                                foreach (var key in remKeys)
                                 {
-                                    case ToDo.R:
-                                        if (copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false)
-                                        {
-                                            copy.Keywords?.Remove(keywords[kyd.Key]);
-                                        }
-                                        break;
-                                    case ToDo.A:
-                                        if (!(copy?.Keywords?.Contains(keywords[kyd.Key]) ?? false))
-                                        {
-                                            copy?.Keywords?.Add(keywords[kyd.Key]);
-                                        }
-                                        break;
+                                    if (copy?.Keywords?.Contains(key) ?? false)
+                                    {
+                                        copy.Keywords?.Remove(key);
+                                    }
+                                    break;
+                                }
+                            }
+                            if (DoAdd)
+                            {
+                                foreach (var key in addKeys)
+                                {
+                                    if (!(copy?.Keywords?.Contains(key) ?? false))
+                                    {
+                                        copy?.Keywords?.Add(key);
+                                    }
+                                    break;
                                 }
                             }
                         }

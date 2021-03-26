@@ -1,6 +1,7 @@
 {
     "ArmorIronGauntlets": {
         "Mod": "Skyrim.esm",
-        "Keywords": {"ArmorMaterialIronBanded":"A", "ArmorGauntlets":"R"}
+        "AKeywords": ["ArmorMaterialIronBanded"],
+        "RKeywords": ["ArmorGauntlets"]
     }
 }
