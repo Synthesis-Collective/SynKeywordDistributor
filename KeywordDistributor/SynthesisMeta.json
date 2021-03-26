@@ -1,0 +1,8 @@
+{
+  "Nickname": "KeywordDistributor",
+  "Visibility": "Include",
+  "OneLineDescription": "Patcher to add and remove keywords from items",
+  "LongDescription": "Patcher to add and remove keywords from Armors/Weapons",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": []
+}
