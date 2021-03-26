@@ -20,7 +20,7 @@ namespace KeywordDistributor
         {
             return await SynthesisPipeline.Instance
                 .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
-                .SetTypicalOpen(GameRelease.SkyrimSE, "SynKeyworder.esp")
+                .SetTypicalOpen(GameRelease.SkyrimSE, "SynKeywordDistributor.esp")
                 .Run(args);
         }
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
