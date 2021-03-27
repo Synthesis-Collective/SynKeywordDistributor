@@ -30,22 +30,22 @@ namespace KeywordDistributor
         {
             var files = Directory.GetFiles(state.DataFolderPath).Where(x => x.EndsWith("_KEYWORDS.json"));
             var JObj = JObject.Parse("{}");
-            foreach (var f in files)
+            files.ForEach(f =>
             {
                 JObj.Merge(JObject.Parse(File.ReadAllText(Path.Combine(state.DataFolderPath, f))), merge);
-            }
+            });
             data = JObj.ToObject<Dictionary<string, Entry>>();
             if (data != null && data.Count != 0)
             {
                 var keywds = data.SelectMany(x => x.Value.AKeywords).Concat(data.SelectMany(x => x.Value.RKeywords)).ToHashSet().ToList();
-                foreach (var kywd in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides())
+                state.LoadOrder.PriorityOrder.Keyword().WinningOverrides().ForEach(kywd =>
                 {
                     if (keywds?.Contains(kywd.EditorID ?? "") ?? false)
                     {
                         keywords[kywd.EditorID ?? ""] = new FormLink<IKeywordGetter>(kywd);
                     }
-                }
-                foreach (var obj in state.LoadOrder.PriorityOrder.SkyrimMajorRecord().WinningContextOverrides(state.LinkCache))
+                });
+                state.LoadOrder.PriorityOrder.SkyrimMajorRecord().WinningContextOverrides(state.LinkCache).ForEach(obj =>
                 {
                     if (data.ContainsKey(obj.Record.EditorID ?? "") && obj.Record is IKeywordedGetter<IKeywordGetter> item && item.Keywords != null && data[obj.Record.EditorID ?? ""].Mod.Equals(obj.Record.FormKey.ModKey))
                     {
@@ -82,7 +82,7 @@ namespace KeywordDistributor
                             }
                         }
                     }
-                }
+                });
             }
         }
     }
