@@ -53,31 +53,29 @@ namespace KeywordDistributor
                         var remWord = data[obj.Record.EditorID ?? ""].RKeywords;
                         var addKeys = keywords.Where(x => addWord.Contains(x.Key)).Select(x => x.Value);
                         var remKeys = keywords.Where(x => remWord.Contains(x.Key)).Select(x => x.Value);
-                        var DoAdd = addKeys.Any(x => !item.Keywords.Contains(x));
-                        var DoRem = remKeys.Any(x => item.Keywords.Contains(x));
+                        var DoAdd = addKeys.Any(x => !item.HasKeyword(x));
+                        var DoRem = remKeys.Any(x => item.HasKeyword(x));
                         if (DoAdd || DoRem)
                         {
                             var copy = obj.GetOrAddAsOverride(state.PatchMod) as IKeyworded<IKeywordGetter>;
-                            if (DoRem)
+                            if (DoRem && copy != null)
                             {
                                 foreach (var key in remKeys)
                                 {
-                                    if (copy?.Keywords?.Contains(key) ?? false)
+                                    if (copy.HasKeyword(key))
                                     {
                                         copy.Keywords?.Remove(key);
                                     }
-                                    break;
                                 }
                             }
-                            if (DoAdd)
+                            if (DoAdd && copy != null)
                             {
                                 foreach (var key in addKeys)
                                 {
-                                    if (!(copy?.Keywords?.Contains(key) ?? false))
+                                    if (!copy.HasKeyword(key))
                                     {
-                                        copy?.Keywords?.Add(key);
+                                        copy.Keywords?.Add(key);
                                     }
-                                    break;
                                 }
                             }
                         }
