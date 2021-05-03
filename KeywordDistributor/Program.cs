@@ -1,4 +1,4 @@
-﻿using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda;
 
