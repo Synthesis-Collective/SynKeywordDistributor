@@ -1,6 +1,7 @@
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda;
+using Mutagen.Bethesda.Plugins.Aspects;
 
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace KeywordDistributor
     class Program
     {
         public static Dictionary<string, Entry>? data = null;
-        public static Dictionary<string, FormLink<IKeywordGetter>> keywords = new();
+        public static Dictionary<string, IKeywordGetter> keywords = new();
         public static JsonMergeSettings merge = new() { MergeArrayHandling = MergeArrayHandling.Union, MergeNullValueHandling = MergeNullValueHandling.Merge };
         public static async Task<int> Main(string[] args)
         {
@@ -42,7 +43,7 @@ namespace KeywordDistributor
                 {
                     if (keywds?.Contains(kywd.EditorID ?? "") ?? false)
                     {
-                        keywords[kywd.EditorID ?? ""] = new FormLink<IKeywordGetter>(kywd);
+                        keywords[kywd.EditorID ?? ""] = kywd;
                     }
                 });
                 state.LoadOrder.PriorityOrder.SkyrimMajorRecord().WinningContextOverrides(state.LinkCache).ForEach(obj =>
