@@ -1,17 +1,19 @@
-using Mutagen.Bethesda.Skyrim;
-using Mutagen.Bethesda.Synthesis;
-using Mutagen.Bethesda;
-using Mutagen.Bethesda.Plugins.Aspects;
-
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Mutagen.Bethesda;
+using Mutagen.Bethesda.Plugins.Aspects;
+using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Synthesis;
+
+using Noggog;
+
 using Newtonsoft.Json.Linq;
 
 using KeywordDistributor.Structs;
-using Noggog;
+
 
 namespace KeywordDistributor
 {
